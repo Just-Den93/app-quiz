@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category Interface</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="level" id="light">Легкій рівень</div>
+        <div class="level" id="medium">Середній рівень</div>
+        <div class="level" id="heavy">Важкій рівень</div>
+    </div>
+    <div id="content-container" class="content-container">
+        <!-- Category rows will be dynamically inserted here -->
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="timer-container" id="timer-container"></div>
+        </div>
+    </div>
+
+    <div id="end-message" class="end-message">
+        <div class="end-message-content">
+            <div class="greetings">Вітаю, ви завершили вікторину!</div>
+            <div class="restart-circle">
+                <img src="./star-sharp-svgrepo-com.svg" alt="Star">
+            </div>
+            <button id="restart-button" class="restart-button">Почати знову</button>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script src="animation.js"></script>
+</body>
+</html>
