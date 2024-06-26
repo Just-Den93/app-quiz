@@ -382,8 +382,39 @@ body {
     border-radius: 10px;
 }
 
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
+.menu-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.menu-modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu-button {
+    font-size: 24px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #7958af;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px; /* Ensure both buttons have the same width */
 }
