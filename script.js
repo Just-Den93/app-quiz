@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		 // Create and append the stop timer button
 		 const stopTimerButton = document.createElement('button');
 		 stopTimerButton.classList.add('stop-timer-button');
-		 stopTimerButton.textContent = 'Stop Timer';
+		 stopTimerButton.textContent = 'Спинити';
 		 timerContainer.appendChild(stopTimerButton);
 
 		 stopTimerButton.addEventListener('click', () => {
