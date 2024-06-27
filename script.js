@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	let timerInterval;
 
 	restartButton.addEventListener('click', () => {
-		 localStorage.clear(); // Clear the local storage
-		 endMessage.style.display = 'none'; // Hide the end message
-		 contentContainer.innerHTML = ''; // Clear the content container
-		 loadCategoriesFromData(); // Reload the categories
-		 location.reload(); // Optionally, reload the page to reset the state
+		 localStorage.clear(); 
+		 endMessage.style.display = 'none'; 
+		 contentContainer.innerHTML = ''; 
+		 loadCategoriesFromData(); 
+		 location.reload(); 
 	});
 
 	newGameButton.addEventListener('click', () => {
-		 localStorage.clear(); // Clear local storage
+		 localStorage.clear(); 
 		 closeMenuModal();
-		 location.reload(); // Reload the page to reset the state
+		 location.reload(); 
 	});
 
 	continueButton.addEventListener('click', closeMenuModal);
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			  if (totalSeconds <= 0) {
 					clearInterval(timerInterval);
 					setTimeout(() => {
-						 hideTimer(); // Hide the timer and stop button together
+						 hideTimer(); 
 					}, 500);
 			  }
 		 }, 1000);
@@ -70,21 +70,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function stopTimer() {
 		 clearInterval(timerInterval);
-		 hideTimer(); // Hide the timer and stop button together
+		 hideTimer(); 
 	}
 
 	function hideTimer() {
-		 timerElement.style.visibility = 'hidden'; // Hide the timer
+		 timerElement.style.visibility = 'hidden'; 
 		 const timerContainer = timerElement.parentElement;
 		 timerContainer.style.opacity = '0';
 		 setTimeout(() => {
 			  timerContainer.remove();
-			  showAnswerButton(); // Show the button after timer disappears
+			  showAnswerButton(); 
 		 }, 300);
 	}
 
 	function loadCategoriesFromData() {
-		 contentContainer.innerHTML = ''; // Clear existing content
+		 contentContainer.innerHTML = ''; 
 
 		 data.forEach(category => {
 			  const categoryRow = document.createElement('div');
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			  contentContainer.appendChild(categoryRow);
 
 			  const itemsContainer = document.getElementById(`items-${category.id}`);
-			  for (let i = 0; i < 9; i++) { // Change number of blocks to 9
+			  for (let i = 0; i < 9; i++) { 
 					const button = document.createElement('button');
 					button.classList.add('item');
 					button.setAttribute('data-item', `${category.id}-${i}`);
@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					const [categoryId, blockId] = itemId.split('-');
 					const block = data[categoryId].blocks[blockId];
 
-					// Clear previous content
 					if (contentText) {
 						 contentText.remove();
 					}
@@ -151,12 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			  });
 		 });
 
-		 // Check category completion on load
 		 data.forEach(category => {
 			  checkCategoryCompletion(category.id);
 		 });
 
-		 // Check overall completion on load
 		 checkOverallCompletion();
 	}
 
@@ -203,16 +200,19 @@ document.addEventListener('DOMContentLoaded', () => {
 						 subAnswerElement.textContent = block.subAnswer;
 					}
 
-					// Check if answer exceeds 60 characters
+					// Adjust font size based on content length
 					if (contentText.textContent.length > 60) {
-						 contentText.style.fontSize = '25px'; // Adjust font size for the answer
+						 contentText.style.fontSize = '25px'; 
 
-						 // Check if subAnswer exceeds 120 characters
 						 if (block.subAnswer && block.subAnswer.length > 120) {
-							  subAnswerElement.style.fontSize = '16px'; // Adjust font size for the subAnswer
+							  subAnswerElement.style.fontSize = '16px'; 
+						 } else if (block.subAnswer && block.subAnswer.length <= 120) {
+							  subAnswerElement.style.fontSize = '18px'; 
 						 }
+					} else if (contentText.textContent.length < 60 && block.subAnswer.length > 120) {
+						subAnswerElement.style.fontSize = '16px'; 
 					} else if (block.subAnswer && block.subAnswer.length <= 120) {
-						 subAnswerElement.style.fontSize = '18px'; // Default font size for subAnswer
+						 subAnswerElement.style.fontSize = '18px'; 
 					}
 
 					if (block.subAnswer) {
@@ -260,19 +260,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		 endMessage.style.display = 'flex';
 		 endMessage.style.opacity = '1';
 
-		 // Add the restart image inside the end message content
 		 const restartCircle = document.createElement('div');
 		 restartCircle.classList.add('restart-circle');
 		 restartCircle.innerHTML = `<img src="./png/award-svgrepo-com.svg" alt="award">`;
 		 endMessageContent.appendChild(restartCircle);
 
-		 // Start the Fireworks animation
 		 startConfetti();
 
 		 setTimeout(() => {
 			  endMessage.querySelector('button').style.visibility = 'visible';
 			  endMessage.querySelector('button').style.opacity = '1';
-		 }, 1000); // Change from 3 to 1 second
+		 }, 1000);
 	}
 
 	function showSelectCategoryButton() {
@@ -318,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		 timerElement = document.createElement('div');
 		 timerElement.classList.add('timer');
 		 timerElement.id = 'timer';
-		 updateTimerDisplay(30); // Initial display of 00:30
+		 updateTimerDisplay(30); 
 
 		 timerElement.style.color = '#7958af';
 		 timerElement.style.animation = 'none';
@@ -328,17 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
 		 timerContainer.appendChild(timerElement);
 		 modalContent.appendChild(timerContainer);
 
-		 // Create and append the stop timer button
 		 const stopTimerButton = document.createElement('button');
 		 stopTimerButton.classList.add('stop-timer-button');
-		 stopTimerButton.textContent = 'Спинити';
+		 stopTimerButton.textContent = 'Stop Timer';
 		 timerContainer.appendChild(stopTimerButton);
 
 		 stopTimerButton.addEventListener('click', () => {
 			  stopTimer();
 		 });
 
-		 // Remove stop button and background when cursor leaves the timer
 		 timerContainer.addEventListener('mouseenter', () => {
 			  stopTimerButton.style.display = 'flex';
 			  stopTimerButton.style.opacity = '1';
