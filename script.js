@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		 // Create and append the stop timer button
 		 const stopTimerButton = document.createElement('button');
 		 stopTimerButton.classList.add('stop-timer-button');
-		 stopTimerButton.textContent = 'Спинити';
+		 stopTimerButton.textContent = 'Stop Timer';
 		 timerContainer.appendChild(stopTimerButton);
 
 		 stopTimerButton.addEventListener('click', () => {
@@ -374,7 +374,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	window.addEventListener('keydown', (event) => {
 		 if (event.key === 'Escape') {
-			  showMenuModal();
+			  if (menuModal.style.display === 'flex') {
+					closeMenuModal();
+			  } else {
+					showMenuModal();
+			  }
 		 }
 	});
 
