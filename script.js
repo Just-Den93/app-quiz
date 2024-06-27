@@ -1,359 +1,396 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('modal');
-    const modalContent = document.querySelector('.modal-content');
-    const closeButton = document.querySelector('.close-button');
-    const contentContainer = document.getElementById('content-container');
-    const endMessage = document.getElementById('end-message');
-    const endMessageContent = document.querySelector('.end-message-content');
-    const restartButton = document.getElementById('restart-button');
-    const menuModal = document.getElementById('menu-modal');
-    const newGameButton = document.getElementById('new-game-button');
-    const continueButton = document.getElementById('continue-button');
-    let contentText, startTimerButton, answerButton, selectCategoryButton, timerElement;
-    let timerInterval;
+	const modal = document.getElementById('modal');
+	const modalContent = document.querySelector('.modal-content');
+	const closeButton = document.querySelector('.close-button');
+	const contentContainer = document.getElementById('content-container');
+	const endMessage = document.getElementById('end-message');
+	const endMessageContent = document.querySelector('.end-message-content');
+	const restartButton = document.getElementById('restart-button');
+	const menuModal = document.getElementById('menu-modal');
+	const newGameButton = document.getElementById('new-game-button');
+	const continueButton = document.getElementById('continue-button');
+	let contentText, startTimerButton, answerButton, selectCategoryButton, timerElement;
+	let timerInterval;
 
-    restartButton.addEventListener('click', () => {
-        localStorage.clear(); // Clear the local storage
-        endMessage.style.display = 'none'; // Hide the end message
-        contentContainer.innerHTML = ''; // Clear the content container
-        loadCategoriesFromData(); // Reload the categories
-        location.reload(); // Optionally, reload the page to reset the state
-    });
+	restartButton.addEventListener('click', () => {
+		 localStorage.clear(); // Clear the local storage
+		 endMessage.style.display = 'none'; // Hide the end message
+		 contentContainer.innerHTML = ''; // Clear the content container
+		 loadCategoriesFromData(); // Reload the categories
+		 location.reload(); // Optionally, reload the page to reset the state
+	});
 
-    newGameButton.addEventListener('click', () => {
-        localStorage.clear(); // Clear local storage
-        closeMenuModal();
-        location.reload(); // Reload the page to reset the state
-    });
+	newGameButton.addEventListener('click', () => {
+		 localStorage.clear(); // Clear local storage
+		 closeMenuModal();
+		 location.reload(); // Reload the page to reset the state
+	});
 
-    continueButton.addEventListener('click', closeMenuModal);
+	continueButton.addEventListener('click', closeMenuModal);
 
-    function startTimer() {
-        let totalSeconds = 30;
+	function startTimer() {
+		 let totalSeconds = 30;
 
-        timerInterval = setInterval(() => {
-            if (totalSeconds > 0) {
-                totalSeconds--;
-            }
-            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-            const seconds = String(totalSeconds % 60).padStart(2, '0');
-            timerElement.innerHTML = `
-                <span>${minutes.charAt(0)}</span>
-                <span>${minutes.charAt(1)}</span>
-                <span class="colon">:</span>
-                <span>${seconds.charAt(0)}</span>
-                <span>${seconds.charAt(1)}</span>
-            `;
+		 timerInterval = setInterval(() => {
+			  if (totalSeconds > 0) {
+					totalSeconds--;
+			  }
+			  updateTimerDisplay(totalSeconds);
 
-            if (totalSeconds <= 3) {
-                timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
-                    span.style.animation = 'blink 1s infinite';
-                });
-            } else {
-                timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
-                    span.style.animation = 'none';
-                });
-            }
+			  if (totalSeconds <= 0) {
+					clearInterval(timerInterval);
+					setTimeout(() => {
+						 hideTimer(); // Hide the timer and stop button together
+					}, 500);
+			  }
+		 }, 1000);
+	}
 
-            if (totalSeconds <= 0) {
-                clearInterval(timerInterval);
-                timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
-                    span.style.animation = 'none';
-                });
-                setTimeout(() => {
-                    timerElement.style.visibility = 'hidden'; // Hide the timer
-                    setTimeout(() => {
-                        showAnswerButton(); // Show the button after timer disappears
-                        modalContent.removeChild(timerElement);
-                    }, 300);
-                }, 500);
-            }
-        }, 1000);
-    }
+	function updateTimerDisplay(totalSeconds) {
+		 const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+		 const seconds = String(totalSeconds % 60).padStart(2, '0');
+		 timerElement.innerHTML = `
+			  <span>${minutes.charAt(0)}</span>
+			  <span>${minutes.charAt(1)}</span>
+			  <span class="colon">:</span>
+			  <span>${seconds.charAt(0)}</span>
+			  <span>${seconds.charAt(1)}</span>
+		 `;
 
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
+		 if (totalSeconds <= 3) {
+			  timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
+					span.style.animation = 'blink 1s infinite';
+			  });
+		 } else {
+			  timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
+					span.style.animation = 'none';
+			  });
+		 }
+	}
 
-    function loadCategoriesFromData() {
-        contentContainer.innerHTML = ''; // Clear existing content
+	function stopTimer() {
+		 clearInterval(timerInterval);
+		 hideTimer(); // Hide the timer and stop button together
+	}
 
-        data.forEach(category => {
-            const categoryRow = document.createElement('div');
-            categoryRow.classList.add('category-row');
-            categoryRow.innerHTML = `
-                <div class="category-name" id="category-${category.id}">${category.name}</div>
-                <div class="items" id="items-${category.id}"></div>
-            `;
-            contentContainer.appendChild(categoryRow);
+	function hideTimer() {
+		 timerElement.style.visibility = 'hidden'; // Hide the timer
+		 const timerContainer = timerElement.parentElement;
+		 timerContainer.style.opacity = '0';
+		 setTimeout(() => {
+			  timerContainer.remove();
+			  showAnswerButton(); // Show the button after timer disappears
+		 }, 300);
+	}
 
-            const itemsContainer = document.getElementById(`items-${category.id}`);
-            for (let i = 0; i < 9; i++) { // Change number of blocks to 9
-                const button = document.createElement('button');
-                button.classList.add('item');
-                button.setAttribute('data-item', `${category.id}-${i}`);
-                button.textContent = (i + 1).toString();
-                itemsContainer.appendChild(button);
-            }
-        });
+	function loadCategoriesFromData() {
+		 contentContainer.innerHTML = ''; // Clear existing content
 
-        document.querySelectorAll('.item').forEach(item => {
-            const itemId = item.getAttribute('data-item');
-            if (localStorage.getItem(itemId) === 'used') {
-                item.classList.add('used');
-            }
+		 data.forEach(category => {
+			  const categoryRow = document.createElement('div');
+			  categoryRow.classList.add('category-row');
+			  categoryRow.innerHTML = `
+					<div class="category-name" id="category-${category.id}">${category.name}</div>
+					<div class="items" id="items-${category.id}"></div>
+			  `;
+			  contentContainer.appendChild(categoryRow);
 
-            item.addEventListener('click', () => {
-                const itemId = item.getAttribute('data-item');
-                const [categoryId, blockId] = itemId.split('-');
-                const block = data[categoryId].blocks[blockId];
+			  const itemsContainer = document.getElementById(`items-${category.id}`);
+			  for (let i = 0; i < 9; i++) { // Change number of blocks to 9
+					const button = document.createElement('button');
+					button.classList.add('item');
+					button.setAttribute('data-item', `${category.id}-${i}`);
+					button.textContent = (i + 1).toString();
+					itemsContainer.appendChild(button);
+			  }
+		 });
 
-                // Clear previous content
-                if (contentText) {
-                    contentText.remove();
-                }
-                if (timerElement) {
-                    timerElement.remove();
-                }
-                if (startTimerButton) {
-                    startTimerButton.remove();
-                }
+		 document.querySelectorAll('.item').forEach(item => {
+			  const itemId = item.getAttribute('data-item');
+			  if (localStorage.getItem(itemId) === 'used') {
+					item.classList.add('used');
+			  }
 
-                contentText = document.createElement('div');
-                contentText.classList.add('content-text');
-                contentText.setAttribute('data-item', itemId);
-                contentText.innerHTML = block ? block.question : 'Питання';
-                modalContent.appendChild(contentText);
+			  item.addEventListener('click', () => {
+					const itemId = item.getAttribute('data-item');
+					const [categoryId, blockId] = itemId.split('-');
+					const block = data[categoryId].blocks[blockId];
 
-                const questionCircle = document.createElement('div');
-                questionCircle.classList.add('question-circle');
-                questionCircle.innerHTML = `<span class="question-mark">?</span>`;
-                contentText.appendChild(questionCircle);
+					// Clear previous content
+					if (contentText) {
+						 contentText.remove();
+					}
+					if (timerElement) {
+						 timerElement.remove();
+					}
+					if (startTimerButton) {
+						 startTimerButton.remove();
+					}
 
-                hideAnswerButton();
-                hideSelectCategoryButton();
+					contentText = document.createElement('div');
+					contentText.classList.add('content-text');
+					contentText.setAttribute('data-item', itemId);
+					contentText.innerHTML = block ? block.question : 'Питання';
+					modalContent.appendChild(contentText);
 
-                modal.style.display = 'block';
-                setTimeout(() => {
-                    modal.style.opacity = '1';
-                    modalContent.classList.add('show');
-                }, 10);
+					const questionCircle = document.createElement('div');
+					questionCircle.classList.add('question-circle');
+					questionCircle.innerHTML = `<span class="question-mark">?</span>`;
+					contentText.appendChild(questionCircle);
 
-                showStartTimerButton();
-            });
-        });
+					hideAnswerButton();
+					hideSelectCategoryButton();
 
-        // Check category completion on load
-        data.forEach(category => {
-            checkCategoryCompletion(category.id);
-        });
+					modal.style.display = 'block';
+					setTimeout(() => {
+						 modal.style.opacity = '1';
+						 modalContent.classList.add('show');
+					}, 10);
 
-        // Check overall completion on load
-        checkOverallCompletion();
-    }
+					showStartTimerButton();
+			  });
+		 });
 
-    function hideAnswerButton() {
-        if (answerButton) {
-            answerButton.remove();
-            answerButton = null;
-        }
-    }
+		 // Check category completion on load
+		 data.forEach(category => {
+			  checkCategoryCompletion(category.id);
+		 });
 
-    function hideSelectCategoryButton() {
-        if (selectCategoryButton) {
-            selectCategoryButton.remove();
-            selectCategoryButton = null;
-        }
-    }
+		 // Check overall completion on load
+		 checkOverallCompletion();
+	}
 
-    function hideStartTimerButton() {
-        if (startTimerButton) {
-            startTimerButton.remove();
-            startTimerButton = null;
-        }
-    }
+	function hideAnswerButton() {
+		 if (answerButton) {
+			  answerButton.remove();
+			  answerButton = null;
+		 }
+	}
 
-    function showAnswerButton() {
-        answerButton = document.createElement('button');
-        answerButton.id = 'answer-button';
-        answerButton.classList.add('answer-button', 'show');
-        answerButton.textContent = 'Показати відповідь';
-        answerButton.style.opacity = '1';
-        modalContent.appendChild(answerButton);
+	function hideSelectCategoryButton() {
+		 if (selectCategoryButton) {
+			  selectCategoryButton.remove();
+			  selectCategoryButton = null;
+		 }
+	}
 
-        answerButton.addEventListener('click', () => {
-            const itemId = contentText.getAttribute('data-item');
-            const [categoryId, blockId] = itemId.split('-');
-            const block = data[categoryId].blocks[blockId];
+	function hideStartTimerButton() {
+		 if (startTimerButton) {
+			  startTimerButton.remove();
+			  startTimerButton = null;
+		 }
+	}
 
-            contentText.innerHTML = block ? block.answer : 'Відповідь';
+	function showAnswerButton() {
+		 if (!answerButton) {
+			  answerButton = document.createElement('button');
+			  answerButton.id = 'answer-button';
+			  answerButton.classList.add('answer-button', 'show');
+			  answerButton.textContent = 'Показати відповідь';
+			  answerButton.style.opacity = '1';
+			  modalContent.appendChild(answerButton);
 
-            const subAnswerElement = document.createElement('div');
-            subAnswerElement.classList.add('sub-answer');
-            if (block.subAnswer) {
-                subAnswerElement.textContent = block.subAnswer;
-            }
+			  answerButton.addEventListener('click', () => {
+					const itemId = contentText.getAttribute('data-item');
+					const [categoryId, blockId] = itemId.split('-');
+					const block = data[categoryId].blocks[blockId];
 
-            // Check if answer exceeds 60 characters
-            if (contentText.textContent.length > 60) {
-                contentText.style.fontSize = '25px'; // Adjust font size for the answer
+					contentText.innerHTML = block ? block.answer : 'Відповідь';
 
-                // Check if subAnswer exceeds 120 characters
-                if (block.subAnswer && block.subAnswer.length > 120) {
-                    subAnswerElement.style.fontSize = '16px'; // Adjust font size for the subAnswer
-                }
-            } else if (block.subAnswer && block.subAnswer.length <= 120) {
-                subAnswerElement.style.fontSize = '18px'; // Default font size for subAnswer
-            }
+					const subAnswerElement = document.createElement('div');
+					subAnswerElement.classList.add('sub-answer');
+					if (block.subAnswer) {
+						 subAnswerElement.textContent = block.subAnswer;
+					}
 
-            if (block.subAnswer) {
-                contentText.appendChild(subAnswerElement);
-            }
+					// Check if answer exceeds 60 characters
+					if (contentText.textContent.length > 60) {
+						 contentText.style.fontSize = '25px'; // Adjust font size for the answer
 
-            hideAnswerButton();
-            showSelectCategoryButton();
+						 // Check if subAnswer exceeds 120 characters
+						 if (block.subAnswer && block.subAnswer.length > 120) {
+							  subAnswerElement.style.fontSize = '16px'; // Adjust font size for the subAnswer
+						 }
+					} else if (block.subAnswer && block.subAnswer.length <= 120) {
+						 subAnswerElement.style.fontSize = '18px'; // Default font size for subAnswer
+					}
 
-            const answerCircle = document.createElement('div');
-            answerCircle.classList.add('question-circle');
-            answerCircle.innerHTML = `<img src="./png/lightbulb-exclamation-svgrepo-com.svg" class="answer-button-icon" alt="?">`;
-            contentText.appendChild(answerCircle);
+					if (block.subAnswer) {
+						 contentText.appendChild(subAnswerElement);
+					}
 
-            const clickedItem = document.querySelector(`[data-item="${itemId}"]`);
-            clickedItem.classList.add('used');
-            localStorage.setItem(itemId, 'used');
-            checkCategoryCompletion(categoryId);
-            checkOverallCompletion();
-        });
-    }
+					hideAnswerButton();
+					showSelectCategoryButton();
 
-    function checkCategoryCompletion(categoryId) {
-        const items = document.querySelectorAll(`#items-${categoryId} .item`);
-        const allUsed = Array.from(items).every(item => item.classList.contains('used'));
+					const answerCircle = document.createElement('div');
+					answerCircle.classList.add('question-circle');
+					answerCircle.innerHTML = `<img src="./png/lightbulb-exclamation-svgrepo-com.svg" class="answer-button-icon" alt="?">`;
+					contentText.appendChild(answerCircle);
 
-        if (allUsed) {
-            const categoryName = document.querySelector(`#category-${categoryId}`);
-            categoryName.classList.add('used');
-            localStorage.setItem(`category-${categoryId}`, 'used');
-        }
-    }
+					const clickedItem = document.querySelector(`[data-item="${itemId}"]`);
+					clickedItem.classList.add('used');
+					localStorage.setItem(itemId, 'used');
+					checkCategoryCompletion(categoryId);
+					checkOverallCompletion();
+			  });
+		 }
+	}
 
-    function checkOverallCompletion() {
-        const allCategories = document.querySelectorAll('.category-name');
-        const allUsed = Array.from(allCategories).every(category => category.classList.contains('used'));
+	function checkCategoryCompletion(categoryId) {
+		 const items = document.querySelectorAll(`#items-${categoryId} .item`);
+		 const allUsed = Array.from(items).every(item => item.classList.contains('used'));
 
-        if (allUsed) {
-            showEndMessage();
-        }
-    }
+		 if (allUsed) {
+			  const categoryName = document.querySelector(`#category-${categoryId}`);
+			  categoryName.classList.add('used');
+			  localStorage.setItem(`category-${categoryId}`, 'used');
+		 }
+	}
 
-    function showEndMessage() {
-        endMessage.style.display = 'flex';
-        endMessage.style.opacity = '1';
+	function checkOverallCompletion() {
+		 const allCategories = document.querySelectorAll('.category-name');
+		 const allUsed = Array.from(allCategories).every(category => category.classList.contains('used'));
 
-        // Add the restart image inside the end message content
-        const restartCircle = document.createElement('div');
-        restartCircle.classList.add('restart-circle');
-        restartCircle.innerHTML = `<img src="./png/award-svgrepo-com.svg" alt="award">`;
-        endMessageContent.appendChild(restartCircle);
+		 if (allUsed) {
+			  showEndMessage();
+		 }
+	}
 
-        // Start the Fireworks animation
-        startConfetti();
+	function showEndMessage() {
+		 endMessage.style.display = 'flex';
+		 endMessage.style.opacity = '1';
 
-        setTimeout(() => {
-            endMessage.querySelector('button').style.visibility = 'visible';
-            endMessage.querySelector('button').style.opacity = '1';
-        }, 1000); // Change from 3 to 1 second
-    }
+		 // Add the restart image inside the end message content
+		 const restartCircle = document.createElement('div');
+		 restartCircle.classList.add('restart-circle');
+		 restartCircle.innerHTML = `<img src="./png/award-svgrepo-com.svg" alt="award">`;
+		 endMessageContent.appendChild(restartCircle);
 
-    function showSelectCategoryButton() {
-        selectCategoryButton = document.createElement('button');
-        selectCategoryButton.id = 'select-category-button';
-        selectCategoryButton.classList.add('select-category-button', 'show');
-        selectCategoryButton.textContent = 'Обрати категорію';
-        selectCategoryButton.style.opacity = '1';
-        modalContent.appendChild(selectCategoryButton);
+		 // Start the Fireworks animation
+		 startConfetti();
 
-        selectCategoryButton.addEventListener('click', () => {
-            modalContent.classList.remove('show');
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.display = 'none';
-                hideSelectCategoryButton();
-            }, 300);
-        });
-    }
+		 setTimeout(() => {
+			  endMessage.querySelector('button').style.visibility = 'visible';
+			  endMessage.querySelector('button').style.opacity = '1';
+		 }, 1000); // Change from 3 to 1 second
+	}
 
-    function showStartTimerButton() {
-        startTimerButton = document.createElement('button');
-        startTimerButton.id = 'start-timer-button';
-        startTimerButton.classList.add('start-timer-button', 'show');
-        startTimerButton.innerHTML = `<img src="./png/refresh-ccw-clock-svgrepo-com.svg" alt="Start Timer" class="start-button-icon">`;
-        startTimerButton.style.opacity = '1';
-        modalContent.appendChild(startTimerButton);
+	function showSelectCategoryButton() {
+		 if (!selectCategoryButton) {
+			  selectCategoryButton = document.createElement('button');
+			  selectCategoryButton.id = 'select-category-button';
+			  selectCategoryButton.classList.add('select-category-button', 'show');
+			  selectCategoryButton.textContent = 'Обрати категорію';
+			  selectCategoryButton.style.opacity = '1';
+			  modalContent.appendChild(selectCategoryButton);
 
-        startTimerButton.addEventListener('click', () => {
-            hideStartTimerButton();
-            showTimer();
-            startTimer();
-            stopConfetti();
-        });
-    }
+			  selectCategoryButton.addEventListener('click', () => {
+					modalContent.classList.remove('show');
+					modal.style.opacity = '0';
+					setTimeout(() => {
+						 modal.style.display = 'none';
+						 hideSelectCategoryButton();
+					}, 300);
+			  });
+		 }
+	}
 
-    function showTimer() {
-        timerElement = document.createElement('div');
-        timerElement.classList.add('timer');
-        timerElement.id = 'timer';
-        timerElement.innerHTML = `
-            <span>00</span>
-            <span class="colon">:</span>
-            <span>30</span>
-        `;
-        timerElement.style.color = '#7958af';
-        timerElement.style.animation = 'none';
-        timerElement.style.visibility = 'visible';
-        timerElement.style.opacity = '1';
-        modalContent.appendChild(timerElement);
-    }
+	function showStartTimerButton() {
+		 startTimerButton = document.createElement('button');
+		 startTimerButton.id = 'start-timer-button';
+		 startTimerButton.classList.add('start-timer-button', 'show');
+		 startTimerButton.innerHTML = `<img src="./png/refresh-ccw-clock-svgrepo-com.svg" alt="Start Timer" class="start-button-icon">`;
+		 startTimerButton.style.opacity = '1';
+		 modalContent.appendChild(startTimerButton);
 
-    closeButton.addEventListener('click', () => {
-        stopTimer();
-        modalContent.classList.remove('show');
-        modal.style.opacity = '0';
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-    });
+		 startTimerButton.addEventListener('click', () => {
+			  hideStartTimerButton();
+			  showTimer();
+			  startTimer();
+			  stopConfetti();
+		 });
+	}
 
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            stopTimer();
-            modalContent.classList.remove('show');
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        }
-    });
+	function showTimer() {
+		 const timerContainer = document.createElement('div');
+		 timerContainer.classList.add('timer-hover-container');
+		 
+		 timerElement = document.createElement('div');
+		 timerElement.classList.add('timer');
+		 timerElement.id = 'timer';
+		 updateTimerDisplay(30); // Initial display of 00:30
 
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            showMenuModal();
-        }
-    });
+		 timerElement.style.color = '#7958af';
+		 timerElement.style.animation = 'none';
+		 timerElement.style.visibility = 'visible';
+		 timerElement.style.opacity = '1';
 
-    function showMenuModal() {
-        menuModal.style.display = 'flex';
-        setTimeout(() => {
-            menuModal.style.opacity = '1';
-        }, 10);
-    }
+		 timerContainer.appendChild(timerElement);
+		 modalContent.appendChild(timerContainer);
 
-    function closeMenuModal() {
-        menuModal.style.opacity = '0';
-        setTimeout(() => {
-            menuModal.style.display = 'none';
-        }, 300);
-    }
+		 // Create and append the stop timer button
+		 const stopTimerButton = document.createElement('button');
+		 stopTimerButton.classList.add('stop-timer-button');
+		 stopTimerButton.textContent = 'Stop Timer';
+		 timerContainer.appendChild(stopTimerButton);
 
-    loadCategoriesFromData();
+		 stopTimerButton.addEventListener('click', () => {
+			  stopTimer();
+		 });
+
+		 // Remove stop button and background when cursor leaves the timer
+		 timerContainer.addEventListener('mouseenter', () => {
+			  stopTimerButton.style.display = 'flex';
+			  stopTimerButton.style.opacity = '1';
+		 });
+
+		 timerContainer.addEventListener('mouseleave', () => {
+			  stopTimerButton.style.opacity = '0';
+			  setTimeout(() => {
+					stopTimerButton.style.display = 'none';
+			  }, 300);
+		 });
+	}
+
+	closeButton.addEventListener('click', () => {
+		 stopTimer();
+		 modalContent.classList.remove('show');
+		 modal.style.opacity = '0';
+		 setTimeout(() => {
+			  modal.style.display = 'none';
+		 }, 300);
+	});
+
+	window.addEventListener('click', (event) => {
+		 if (event.target === modal) {
+			  stopTimer();
+			  modalContent.classList.remove('show');
+			  modal.style.opacity = '0';
+			  setTimeout(() => {
+					modal.style.display = 'none';
+			  }, 300);
+		 }
+	});
+
+	window.addEventListener('keydown', (event) => {
+		 if (event.key === 'Escape') {
+			  showMenuModal();
+		 }
+	});
+
+	function showMenuModal() {
+		 menuModal.style.display = 'flex';
+		 setTimeout(() => {
+			  menuModal.style.opacity = '1';
+		 }, 10);
+	}
+
+	function closeMenuModal() {
+		 menuModal.style.opacity = '0';
+		 setTimeout(() => {
+			  menuModal.style.display = 'none';
+		 }, 300);
+	}
+
+	loadCategoriesFromData();
 });
