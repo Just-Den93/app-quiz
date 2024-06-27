@@ -46,16 +46,19 @@ body {
 #light {
   margin-left: 157px;
   width: 250px;
+  height: 50px;
 }
 
 #medium {
   margin-left: 22px;
   width: 250px;
+  height: 50px;
 }
 
 #heavy {
   margin-left: 22px;
   width: 250px;
+  height: 50px;
 }
 
 .content-container {
