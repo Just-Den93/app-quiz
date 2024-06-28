@@ -32,7 +32,7 @@ body {
 .level {
   text-align: center;
   background-color: #a18ac7;
-  height: 70px;
+  height: 50px; /* Updated height */
   width: 210px; /* Each level name block spans three numbered blocks */
   display: flex;
   align-items: center;
@@ -46,19 +46,16 @@ body {
 #light {
   margin-left: 157px;
   width: 250px;
-  height: 50px;
 }
 
 #medium {
   margin-left: 22px;
   width: 250px;
-  height: 50px;
 }
 
 #heavy {
   margin-left: 22px;
   width: 250px;
-  height: 50px;
 }
 
 .content-container {
@@ -219,6 +216,9 @@ body {
 
 .timer-container {
   margin-top: 20px; /* Space for timer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .timer {
@@ -234,17 +234,21 @@ body {
   transition: opacity 0.3s ease;
 }
 
-.timer span {
+.timer .digit,
+.timer .colon {
   background: rgba(255, 255, 255, 0.7); /* Translucent white background */
   border-radius: 10px;
-  padding: 10px 20px; /* Adjusted for consistent width */
+  padding: 10px 0; /* Adjusted for consistent width */
   margin: 0 5px;
+  display: inline-block;
+  width: 80px; /* Fixed width for digits */
+  text-align: center; /* Center align digits */
 }
 
-.timer span.colon {
+.timer .colon {
   background: transparent; /* No background for the colon */
-  padding: 0;
-  margin: 0 5px;
+  width: auto; /* Let colon have auto width */
+  padding: 0 10px;
 }
 
 .content-text {
