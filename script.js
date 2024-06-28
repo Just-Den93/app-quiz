@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	let timerInterval;
 
 	restartButton.addEventListener('click', () => {
-		 localStorage.clear(); 
-		 endMessage.style.display = 'none'; 
-		 contentContainer.innerHTML = ''; 
-		 loadCategoriesFromData(); 
-		 location.reload(); 
+		 localStorage.clear();
+		 endMessage.style.display = 'none';
+		 contentContainer.innerHTML = '';
+		 loadCategoriesFromData();
+		 location.reload();
 	});
 
 	newGameButton.addEventListener('click', () => {
-		 localStorage.clear(); 
+		 localStorage.clear();
 		 closeMenuModal();
-		 location.reload(); 
+		 location.reload();
 	});
 
 	continueButton.addEventListener('click', closeMenuModal);
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			  if (totalSeconds <= 0) {
 					clearInterval(timerInterval);
 					setTimeout(() => {
-						 hideTimer(); 
+						 hideTimer();
 					}, 500);
 			  }
 		 }, 1000);
@@ -50,19 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		 const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
 		 const seconds = String(totalSeconds % 60).padStart(2, '0');
 		 timerElement.innerHTML = `
-			  <span>${minutes.charAt(0)}</span>
-			  <span>${minutes.charAt(1)}</span>
+			  <span class="digit">${minutes.charAt(0)}</span>
+			  <span class="digit">${minutes.charAt(1)}</span>
 			  <span class="colon">:</span>
-			  <span>${seconds.charAt(0)}</span>
-			  <span>${seconds.charAt(1)}</span>
+			  <span class="digit">${seconds.charAt(0)}</span>
+			  <span class="digit">${seconds.charAt(1)}</span>
 		 `;
 
 		 if (totalSeconds <= 3) {
-			  timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
+			  timerElement.querySelectorAll('.digit').forEach(span => {
 					span.style.animation = 'blink 1s infinite';
 			  });
 		 } else {
-			  timerElement.querySelectorAll('span:not(.colon)').forEach(span => {
+			  timerElement.querySelectorAll('.digit').forEach(span => {
 					span.style.animation = 'none';
 			  });
 		 }
@@ -70,21 +70,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function stopTimer() {
 		 clearInterval(timerInterval);
-		 hideTimer(); 
+		 hideTimer();
 	}
 
 	function hideTimer() {
-		 timerElement.style.visibility = 'hidden'; 
+		 timerElement.style.visibility = 'hidden';
 		 const timerContainer = timerElement.parentElement;
 		 timerContainer.style.opacity = '0';
 		 setTimeout(() => {
 			  timerContainer.remove();
-			  showAnswerButton(); 
+			  showAnswerButton();
 		 }, 300);
 	}
 
 	function loadCategoriesFromData() {
-		 contentContainer.innerHTML = ''; 
+		 contentContainer.innerHTML = '';
 
 		 data.forEach(category => {
 			  const categoryRow = document.createElement('div');
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			  contentContainer.appendChild(categoryRow);
 
 			  const itemsContainer = document.getElementById(`items-${category.id}`);
-			  for (let i = 0; i < 9; i++) { 
+			  for (let i = 0; i < 9; i++) {
 					const button = document.createElement('button');
 					button.classList.add('item');
 					button.setAttribute('data-item', `${category.id}-${i}`);
@@ -130,6 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
 					contentText.classList.add('content-text');
 					contentText.setAttribute('data-item', itemId);
 					contentText.innerHTML = block ? block.question : 'Питання';
+
+					// Adjust font size based on content length
+					if (contentText.textContent.length > 60) {
+						 contentText.style.fontSize = '25px';
+					} else {
+						 contentText.style.fontSize = '32px'; // default font size
+					}
+
 					modalContent.appendChild(contentText);
 
 					const questionCircle = document.createElement('div');
@@ -202,17 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 					// Adjust font size based on content length
 					if (contentText.textContent.length > 60) {
-						 contentText.style.fontSize = '25px'; 
+						 contentText.style.fontSize = '25px';
 
 						 if (block.subAnswer && block.subAnswer.length > 120) {
-							  subAnswerElement.style.fontSize = '16px'; 
+							  subAnswerElement.style.fontSize = '16px';
 						 } else if (block.subAnswer && block.subAnswer.length <= 120) {
-							  subAnswerElement.style.fontSize = '18px'; 
+							  subAnswerElement.style.fontSize = '18px';
 						 }
 					} else if (contentText.textContent.length < 60 && block.subAnswer.length > 120) {
-						subAnswerElement.style.fontSize = '16px'; 
+						 subAnswerElement.style.fontSize = '16px';
 					} else if (block.subAnswer && block.subAnswer.length <= 120) {
-						 subAnswerElement.style.fontSize = '18px'; 
+						 subAnswerElement.style.fontSize = '18px';
 					}
 
 					if (block.subAnswer) {
@@ -312,11 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	function showTimer() {
 		 const timerContainer = document.createElement('div');
 		 timerContainer.classList.add('timer-hover-container');
-		 
+
 		 timerElement = document.createElement('div');
 		 timerElement.classList.add('timer');
 		 timerElement.id = 'timer';
-		 updateTimerDisplay(30); 
+		 updateTimerDisplay(30);
 
 		 timerElement.style.color = '#7958af';
 		 timerElement.style.animation = 'none';
@@ -328,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		 const stopTimerButton = document.createElement('button');
 		 stopTimerButton.classList.add('stop-timer-button');
-		 stopTimerButton.textContent = 'Спинити';
+		 stopTimerButton.textContent = 'Спинити'; // Updated text
 		 timerContainer.appendChild(stopTimerButton);
 
 		 stopTimerButton.addEventListener('click', () => {
@@ -349,22 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	closeButton.addEventListener('click', () => {
-		 stopTimer();
-		 modalContent.classList.remove('show');
-		 modal.style.opacity = '0';
-		 setTimeout(() => {
-			  modal.style.display = 'none';
-		 }, 300);
+		 closeModal();
 	});
 
 	window.addEventListener('click', (event) => {
 		 if (event.target === modal) {
-			  stopTimer();
-			  modalContent.classList.remove('show');
-			  modal.style.opacity = '0';
-			  setTimeout(() => {
-					modal.style.display = 'none';
-			  }, 300);
+			  closeModal();
 		 }
 	});
 
@@ -377,6 +375,39 @@ document.addEventListener('DOMContentLoaded', () => {
 			  }
 		 }
 	});
+
+	function closeModal() {
+		 stopTimer();
+		 modalContent.classList.remove('show');
+		 modal.style.opacity = '0';
+		 setTimeout(() => {
+			  modal.style.display = 'none';
+			  clearModalContent();
+		 }, 300);
+	}
+
+	function clearModalContent() {
+		 if (contentText) {
+			  contentText.remove();
+			  contentText = null;
+		 }
+		 if (startTimerButton) {
+			  startTimerButton.remove();
+			  startTimerButton = null;
+		 }
+		 if (answerButton) {
+			  answerButton.remove();
+			  answerButton = null;
+		 }
+		 if (selectCategoryButton) {
+			  selectCategoryButton.remove();
+			  selectCategoryButton = null;
+		 }
+		 if (timerElement) {
+			  timerElement.remove();
+			  timerElement = null;
+		 }
+	}
 
 	function showMenuModal() {
 		 menuModal.style.display = 'flex';
