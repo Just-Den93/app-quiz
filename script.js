@@ -251,8 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
 			subAnswerElement.classList.add('sub-answer');
 			if (block.subAnswer) {
 			  if (block.subAnswer.length > 10) {
-				 subAnswerElement.textContent = block.subAnswer.slice(0, 10) + 
-					"\n" + block.subAnswer.slice(10);
+				 let splitIndex = 10;
+				 const characters = ['.', ',', ':', ';', '-'];
+ 
+				 // Find the nearest character from the list after the 10th character
+				 for (let i = 10; i < block.subAnswer.length; i++) {
+					if (characters.includes(block.subAnswer[i])) {
+					  splitIndex = i + 1;
+					  break;
+					}
+				 }
+ 
+				 subAnswerElement.textContent = block.subAnswer.slice(0, splitIndex) + "\n" + block.subAnswer.slice(splitIndex);
 			  } else {
 				 subAnswerElement.textContent = block.subAnswer;
 			  }
