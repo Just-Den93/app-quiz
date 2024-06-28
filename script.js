@@ -148,6 +148,16 @@ document.addEventListener('DOMContentLoaded', () => {
 					hideAnswerButton();
 					hideSelectCategoryButton();
 
+					const existingSelectedInfo = document.querySelector('.selected-info');
+					if (existingSelectedInfo) {
+						 existingSelectedInfo.remove();
+					}
+
+					const selectedInfo = document.createElement('div');
+					selectedInfo.classList.add('selected-info');
+					selectedInfo.innerHTML = `<span class="info-category-name">${data[categoryId].name}</span><div class="selected-number">${parseInt(blockId) + 1}</div>`;
+					modalContent.appendChild(selectedInfo);
+
 					modal.style.display = 'block';
 					setTimeout(() => {
 						 modal.style.opacity = '1';
@@ -406,6 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		 if (timerElement) {
 			  timerElement.remove();
 			  timerElement = null;
+		 }
+		 const selectedInfo = document.querySelector('.selected-info');
+		 if (selectedInfo) {
+			  selectedInfo.remove();
 		 }
 	}
 
